@@ -1,7 +1,8 @@
 const gameNew = document.getElementById("game");
 const ctx = gameNew.getContext("2d");
-let speed = 100;
+let speed = 5;
 const yourScore = document.getElementById("score");
+let snakeArr = [];
 //get the canvas height and width
 gameNew.setAttribute("height", getComputedStyle(gameNew)["height"]); 
 gameNew.setAttribute("width", getComputedStyle(gameNew)["width"]);
@@ -23,8 +24,8 @@ class Chracter {
         }
 
         this.updatePosition = function() {
-            this.x += this.xVel;
-            this.y += this.yVel; // for the towards x and y co-ardinates
+            this.x += this.xVel ;
+            this.y += this.yVel ; // for the towards x and y co-ardinates
             
         }
     }
@@ -34,7 +35,8 @@ class Chracter {
 window.addEventListener("DOMContentLoaded", function() {
    
 snake = new Chracter(200,200,"black", 50, 50, 0, 0);
-
+snakeArr.push(snake)
+console.log(snake)
 food = new Chracter(350, 150, "red", 20, 20)
 gameLoop()
 
@@ -47,8 +49,26 @@ function gameLoop() {
     if(food.alive) {
         food.render()
     }
+
+    for( let i = (snakeArr.length - 1); i > 0; i--){ // backward loop for snake segments
+        snakeArr[i].x = snakeArr[i -1].x;
+        snakeArr[i].y = snakeArr[i - 1].y
+        //snakeArr[i].render()
+        console.log(snakeArr[i])
+        console.log(snakeArr[i].x)
+        console.log(snakeArr[i].y)
+    }
+
+    snakeArr[0].x += snake.xVel * snake.width
+    snakeArr[0].y += snake.yVel * snake.width
+   
+
    snake.updatePosition()
     snake.render()
+
+    for( let i = 0; i < snakeArr.length; i++){
+      snakeArr[i].render();
+    }
     findFood()
     
 }
@@ -95,6 +115,7 @@ function findFood() {
        newScore += 5;
        yourScore.textContent = `Score: ${newScore}`
       // food.alive = false;
+      growSnake()
        food.x = Math.floor(Math.random() * (gameNew.width - 40));
        console.log(food.x)
        food.y = Math.floor(Math.random() * (gameNew.height - 80));
@@ -105,4 +126,12 @@ let randomIndex = Math.floor(Math.random() * (color.length - 1));
 let randomColor = color[randomIndex];
 food.color = randomColor;
     }
+}
+
+// now need to grow the snake when it collides with food
+
+function growSnake() {
+   let snakeParts = new Chracter(snake.x, snake.y, "red", snake.width, snake.height);
+   snakeArr.push(snakeParts);
+   console.log(snakeArr)
 }
