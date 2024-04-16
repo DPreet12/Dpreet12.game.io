@@ -39,7 +39,8 @@ snake = new Chracter(200,200,"black", 50, 50, 0, 0);
 snakeArr.push(snake)
 console.log(snake)
 food = new Chracter(350, 150, "red", 20, 20);
-playBtn.addEventListener("click", drawInstructions)
+playBtn.addEventListener("click", drawInstructions);
+endBtn.addEventListener("click", restart)
 gameLoop()
 
 });
@@ -47,10 +48,16 @@ gameLoop()
 // game will run in a loop in this function
 function gameLoop() {
     ctx.clearRect(0, 0, gameNew.width, gameNew.height); // to clear the canvas
-    setTimeout(gameLoop, 1000/speed)
-    if(food.alive) {
+    
+    if( gameOver){
+        return
+      }
+      setTimeout(gameLoop, 1000/speed)
+
+      if(food.alive) {
         food.render()
     }
+
 
     for( let i = (snakeArr.length - 1); i > 0; i--){ // backward loop for snake segments
         snakeArr[i].x = snakeArr[i -1].x;
@@ -60,9 +67,7 @@ function gameLoop() {
         //console.log(snakeArr[i].x)
         //console.log(snakeArr[i].y)
     }
-      if( gameOver){
-        return
-      }
+      
     if (walls()) {
         snake.xVel = 0;
         snake.yVel = 0;
@@ -81,7 +86,6 @@ function gameLoop() {
       snakeArr[i].render();
     }
     findFood()
-   
 }
 
 // update snake movement using arrow keys but not  allow  the snake to movw in a opposite direction
@@ -125,12 +129,12 @@ function findFood() {
     snake.x < food.x + food.width) {
        newScore += 5;
        yourScore.textContent = `Score: ${newScore}`
-      // food.alive = false;
+     //  food.alive = false;
       growSnake()
        food.x = Math.floor(Math.random() * (gameNew.width - 40));
        console.log(food.x)
        food.y = Math.floor(Math.random() * (gameNew.height - 80));
-//food.alive = true;
+food.alive = true;
 
 const color = ["#bada55", "purple", "gold", "blue"];
 let randomIndex = Math.floor(Math.random() * (color.length - 1));
@@ -182,16 +186,35 @@ function drawInstructions() {
     obestacles.textContent = " Try to avoid canvas edges and also, do not let touch snake head to its body"
     instructionsDiv.append(obestacles)
      
+    if( playBtn){
+        gameOver = true;
+    } 
     let startBtn = document.createElement("button");
     startBtn.textContent = "Start Game";
     instructionsDiv.append(startBtn);
     startBtn.addEventListener("click", gameInit);
     gameNew.parentNode.appendChild(instructionsDiv);
     
-    console.log(instructionsDiv)
+    
+    //console.log(instructionsDiv)
 }
 
 function gameInit() {
+  gameOver = false; // to restrat if game is paused
     document.querySelector("#instructions").remove();
+    
     gameLoop();
+}
+
+function restart() {
+  if( gameOver) {
+    snake.x = 250;
+    snake.y = 200;
+    food.x = 350;
+    food.y = 150;
+    snakeArr = [snake];
+   gameOver = false;
+    
+  }
+  gameLoop()
 }
