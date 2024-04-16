@@ -4,6 +4,9 @@ let speed = 5;
 const yourScore = document.getElementById("score");
 let snakeArr = [];
 let gameOver = false;
+const movement = document.getElementById("movement");
+const highScore = document.getElementById("highScore");
+
 //get the canvas height and width
 gameNew.setAttribute("height", getComputedStyle(gameNew)["height"]); 
 gameNew.setAttribute("width", getComputedStyle(gameNew)["width"]);
@@ -50,6 +53,12 @@ function gameLoop() {
     ctx.clearRect(0, 0, gameNew.width, gameNew.height); // to clear the canvas
     
     if( gameOver){
+        setTimeout(function(){
+            movement.textContent = "Snake is dead";
+            movement.style.color = "red";
+        }, 100)
+        newScore = 0;
+        yourScore.textContent = `Score: ${newScore}`
         return
       }
       setTimeout(gameLoop, 1000/speed)
@@ -86,6 +95,9 @@ function gameLoop() {
       snakeArr[i].render();
     }
     findFood()
+
+    newHighScore = Number(localStorage.getItem("recordScore"));
+    highScore.textContent = `Record: ${newHighScore}`;
 }
 
 // update snake movement using arrow keys but not  allow  the snake to movw in a opposite direction
@@ -118,7 +130,10 @@ function control(e) {
 
 // if snake eats the food, food will disappear and appear back in random location
 let newScore = Number(yourScore.textContent);
-yourScore.textContent = `Score: ${newScore}`
+yourScore.textContent = `Score: ${newScore}`;
+
+let newHighScore = Number(highScore.textContent);
+highScore.textContent = `Record: ${newHighScore}`
 
 console.log("-----",newScore)
 
@@ -129,7 +144,15 @@ function findFood() {
     snake.x < food.x + food.width) {
        newScore += 5;
        yourScore.textContent = `Score: ${newScore}`
+
+       //newHighSCore = Number(highScore.textContent);
+       //highScore.textContent = `Record: ${newHighScore}`;
      //  food.alive = false;
+     if( newScore > newHighScore){
+       newHighScore = newScore;
+       localStorage.setItem("recordScore", newHighScore.toString());
+       //highScore.textContent = `Record: ${newHighScore}`;
+     }
       growSnake()
        food.x = Math.floor(Math.random() * (gameNew.width - 40));
        console.log(food.x)
@@ -214,7 +237,8 @@ function restart() {
     food.y = 150;
     snakeArr = [snake];
    gameOver = false;
-    
+   movement.textContent = "Snake lives"
+   movement.style.color ="green";
   }
   gameLoop()
 }
