@@ -38,7 +38,8 @@ window.addEventListener("DOMContentLoaded", function() {
 snake = new Chracter(200,200,"black", 50, 50, 0, 0);
 snakeArr.push(snake)
 console.log(snake)
-food = new Chracter(350, 150, "red", 20, 20)
+food = new Chracter(350, 150, "red", 20, 20);
+playBtn.addEventListener("click", drawInstructions)
 gameLoop()
 
 });
@@ -158,4 +159,39 @@ function walls() {
     return true;
   }
   //return false;
+}
+
+// draw instructions at canvas
+
+function drawInstructions() {
+    ctx.clearRect(0, 0, gameNew.width, gameNew.height);
+
+    let instructionsDiv = document.createElement("div");
+    instructionsDiv.setAttribute("id", "instructions");
+
+    let heading = document.createElement("h2");
+    heading.textContent = "Check instructions";
+    instructionsDiv.append(heading)
+    //console.log(instructionsDiv);
+
+    let textMovement = document.createElement("p");
+    textMovement.textContent = " Use arrow keys or (w, s , a d) to move Up, Down, Left & Right"
+    instructionsDiv.append(textMovement)
+
+    let obestacles = document.createElement("p");
+    obestacles.textContent = " Try to avoid canvas edges and also, do not let touch snake head to its body"
+    instructionsDiv.append(obestacles)
+     
+    let startBtn = document.createElement("button");
+    startBtn.textContent = "Start Game";
+    instructionsDiv.append(startBtn);
+    startBtn.addEventListener("click", gameInit);
+    gameNew.parentNode.appendChild(instructionsDiv);
+    
+    console.log(instructionsDiv)
+}
+
+function gameInit() {
+    document.querySelector("#instructions").remove();
+    gameLoop();
 }

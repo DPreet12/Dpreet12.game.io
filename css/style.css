@@ -105,3 +105,17 @@ canvas {
     transform: translateX(-50%);
     left: 50%;
 }
+
+#instructions {
+    border: 10px solid rgb(100, 0, 0);
+    border-radius: 5px;
+    background: white;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    font-weight: bolder;
+    padding: 1em;
+  }
+  
