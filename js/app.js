@@ -3,6 +3,7 @@ const ctx = gameNew.getContext("2d");
 let speed = 5;
 const yourScore = document.getElementById("score");
 let snakeArr = [];
+let gameOver = false;
 //get the canvas height and width
 gameNew.setAttribute("height", getComputedStyle(gameNew)["height"]); 
 gameNew.setAttribute("width", getComputedStyle(gameNew)["width"]);
@@ -54,15 +55,24 @@ function gameLoop() {
         snakeArr[i].x = snakeArr[i -1].x;
         snakeArr[i].y = snakeArr[i - 1].y
         //snakeArr[i].render()
-        console.log(snakeArr[i])
-        console.log(snakeArr[i].x)
-        console.log(snakeArr[i].y)
+        //console.log(snakeArr[i])
+        //console.log(snakeArr[i].x)
+        //console.log(snakeArr[i].y)
+    }
+      if( gameOver){
+        return
+      }
+    if (walls()) {
+        snake.xVel = 0;
+        snake.yVel = 0;
+        alert("game over")
+       gameOver = true;
+        return;
     }
 
     snakeArr[0].x += snake.xVel * snake.width
     snakeArr[0].y += snake.yVel * snake.width
-   
-
+ 
    snake.updatePosition()
     snake.render()
 
@@ -70,7 +80,7 @@ function gameLoop() {
       snakeArr[i].render();
     }
     findFood()
-    
+   
 }
 
 // update snake movement using arrow keys but not  allow  the snake to movw in a opposite direction
@@ -134,4 +144,18 @@ function growSnake() {
    let snakeParts = new Chracter(snake.x, snake.y, "red", snake.width, snake.height);
    snakeArr.push(snakeParts);
    console.log(snakeArr)
+}
+// function if snake collided with the wall or snake's head collided with its body
+function walls() {
+  gameOver = false; // game is running
+  
+  for( let i = 2; i < snakeArr.length; i++) {
+    if( snakeArr[0].x === snakeArr[i].x && snakeArr[0].y === snakeArr[i].y) {
+        return true;
+    }
+  }
+  if( snakeArr[0].x < 0 || snakeArr[0].x + snakeArr[0].width > gameNew.width || snakeArr[0].y < 0 || snakeArr[0].y + snakeArr[0].height > gameNew.height) {
+    return true;
+  }
+  //return false;
 }
