@@ -1,7 +1,7 @@
 const gameNew = document.getElementById("game");
 const ctx = gameNew.getContext("2d");
 let speed = 100;
-
+const yourScore = document.getElementById("score");
 //get the canvas height and width
 gameNew.setAttribute("height", getComputedStyle(gameNew)["height"]); 
 gameNew.setAttribute("width", getComputedStyle(gameNew)["width"]);
@@ -49,6 +49,7 @@ function gameLoop() {
     }
    snake.updatePosition()
     snake.render()
+    findFood()
     
 }
 
@@ -78,4 +79,30 @@ function control(e) {
     snake.yVel = 0;
    snake.xVel = -1;
 }
+}
+
+// if snake eats the food, food will disappear and appear back in random location
+let newScore = Number(yourScore.textContent);
+yourScore.textContent = `Score: ${newScore}`
+
+console.log("-----",newScore)
+
+function findFood() {
+    if ( snake.y + snake.height > food.y &&
+    snake.y < food.y + food.height &&
+     snake.x + snake.width > food.x &&
+    snake.x < food.x + food.width) {
+       newScore += 5;
+       yourScore.textContent = `Score: ${newScore}`
+      // food.alive = false;
+       food.x = Math.floor(Math.random() * (gameNew.width - 40));
+       console.log(food.x)
+       food.y = Math.floor(Math.random() * (gameNew.height - 80));
+//food.alive = true;
+
+const color = ["#bada55", "purple", "gold", "blue"];
+let randomIndex = Math.floor(Math.random() * (color.length - 1));
+let randomColor = color[randomIndex];
+food.color = randomColor;
+    }
 }
