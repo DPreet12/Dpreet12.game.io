@@ -6,8 +6,13 @@ let snakeArr = [];
 let gameOver = false;
 const movement = document.getElementById("movement");
 const highScore = document.getElementById("highScore");
+const biteSound = new Audio("./music/food.mp3");
+const endSound = new Audio("./music/gameover.mp3");
+const appleImage = document.getElementById("apple");
+let newImage;
 
-//get the canvas height and width
+
+//canvas height and width
 gameNew.setAttribute("height", getComputedStyle(gameNew)["height"]); 
 gameNew.setAttribute("width", getComputedStyle(gameNew)["width"]);
 
@@ -29,19 +34,36 @@ class Chracter {
 
         this.updatePosition = function() {
             this.x += this.xVel ;
-            this.y += this.yVel ; // for the towards x and y co-ardinates
+            this.y += this.yVel  ; // for the towards x and y co-ardinates
             
         }
     }
 }
 
+class ImageClass {
+  constructor(x, y, image, width, height) {
+      this.x = x;
+      this.y = y;
+      this.image = image;
+      this.width = width;
+      this.height =height;
+      this.alive = true;
+
+      this.render = function() {
+            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+      }
+ }
+}
+
+
 
 window.addEventListener("DOMContentLoaded", function() {
    
-snake = new Chracter(200,200,"black", 50, 50, 0, 0);
+snake = new Chracter(250,200,"black", 50, 50, 0, 0);
 snakeArr.push(snake)
-console.log(snake)
-food = new Chracter(350, 150, "red", 20, 20);
+;
+
+newImage = new ImageClass(350, 150, appleImage, 40, 40);
 playBtn.addEventListener("click", drawInstructions);
 endBtn.addEventListener("click", restart)
 gameLoop()
@@ -54,17 +76,20 @@ function gameLoop() {
     
     if( gameOver){
         setTimeout(function(){
-            movement.textContent = "Snake is dead";
+            movement.textContent = "Snake is dead!";
             movement.style.color = "red";
         }, 100)
+
         newScore = 0;
         yourScore.textContent = `Score: ${newScore}`
+
         return
       }
+      
       setTimeout(gameLoop, 1000/speed)
 
-      if(food.alive) {
-        food.render()
+      if(newImage.alive) {
+        newImage.render()
     }
 
 
@@ -78,18 +103,23 @@ function gameLoop() {
     }
       
     if (walls()) {
-        snake.xVel = 0;
-        snake.yVel = 0;
-        alert("game over")
-       gameOver = true;
-        return;
-    }
+      
+      snake.xVel = 0;
+      snake.yVel = 0;
+      endSound.play()
+      alert("game over")
+      
+     gameOver = true;
+      return;
+  }
 
     snakeArr[0].x += snake.xVel * snake.width
-    snakeArr[0].y += snake.yVel * snake.width
+    snakeArr[0].y += snake.yVel * snake.height
  
-   snake.updatePosition()
-    snake.render()
+  
+
+snake.updatePosition()
+    //snake.render()
 
     for( let i = 0; i < snakeArr.length; i++){
       snakeArr[i].render();
@@ -102,7 +132,6 @@ function gameLoop() {
 
 // update snake movement using arrow keys but not  allow  the snake to movw in a opposite direction
 
-// maniuplate key codes
 
 const upward = 38;
 const downward = 40;
@@ -116,7 +145,7 @@ function control(e) {
   if((e.keyCode === upward || e.key === "w") && snake.yVel !== 1) {
     snake.yVel = -1;
     snake.xVel = 0; 
-}else if ((e.keyCode === downward || e.key === "s") && snake.yVel !==1) {
+}else if ((e.keyCode === downward || e.key === "s") && snake.yVel !== -1) {
     snake.yVel = 1;
    snake.xVel = 0;
 }else if ((e.keyCode === right || e.key === "d") && snake.xVel !== -1) {
@@ -138,35 +167,29 @@ highScore.textContent = `Record: ${newHighScore}`
 console.log("-----",newScore)
 
 function findFood() {
-    if ( snake.y + snake.height > food.y &&
-    snake.y < food.y + food.height &&
-     snake.x + snake.width > food.x &&
-    snake.x < food.x + food.width) {
+    if ( snake.y + snake.height > newImage.y &&
+    snake.y < newImage.y + newImage.height &&
+     snake.x + snake.width > newImage.x &&
+    snake.x < newImage.x + newImage.width) {
        newScore += 5;
        yourScore.textContent = `Score: ${newScore}`
+       biteSound.play()
 
-       //newHighSCore = Number(highScore.textContent);
-       //highScore.textContent = `Record: ${newHighScore}`;
-     //  food.alive = false;
      if( newScore > newHighScore){
        newHighScore = newScore;
        localStorage.setItem("recordScore", newHighScore.toString());
        //highScore.textContent = `Record: ${newHighScore}`;
      }
       growSnake()
-       food.x = Math.floor(Math.random() * (gameNew.width - 40));
-       console.log(food.x)
-       food.y = Math.floor(Math.random() * (gameNew.height - 80));
-food.alive = true;
+       newImage.x = Math.floor(Math.random() * (gameNew.width - 70));
+       console.log(newImage.x)
+       newImage.y = Math.floor(Math.random() * (gameNew.height - 120));
+ newImage.alive = true;
 
-const color = ["#bada55", "purple", "gold", "blue"];
-let randomIndex = Math.floor(Math.random() * (color.length - 1));
-let randomColor = color[randomIndex];
-food.color = randomColor;
     }
 }
 
-// now need to grow the snake when it collides with food
+// now need to grow the snake when it collides with newImage
 
 function growSnake() {
    let snakeParts = new Chracter(snake.x, snake.y, "red", snake.width, snake.height);
@@ -182,15 +205,17 @@ function walls() {
         return true;
     }
   }
-  if( snakeArr[0].x < 0 || snakeArr[0].x + snakeArr[0].width > gameNew.width || snakeArr[0].y < 0 || snakeArr[0].y + snakeArr[0].height > gameNew.height) {
+  if( snakeArr[0].x <= 0 || snakeArr[0].x + snakeArr[0].width > gameNew.width || snakeArr[0].y <= 0 || snakeArr[0].y + snakeArr[0].height > gameNew.height) {
     return true;
   }
-  //return false;
+  
 }
 
 // draw instructions at canvas
 
+
 function drawInstructions() {
+
     ctx.clearRect(0, 0, gameNew.width, gameNew.height);
 
     let instructionsDiv = document.createElement("div");
@@ -198,6 +223,7 @@ function drawInstructions() {
 
     let heading = document.createElement("h2");
     heading.textContent = "Check instructions";
+    //heading.style.color = "red";
     instructionsDiv.append(heading)
     //console.log(instructionsDiv);
 
@@ -208,37 +234,43 @@ function drawInstructions() {
     let obestacles = document.createElement("p");
     obestacles.textContent = " Try to avoid canvas edges and also, do not let touch snake head to its body"
     instructionsDiv.append(obestacles)
-     
-    if( playBtn){
-        gameOver = true;
-    } 
+
+
     let startBtn = document.createElement("button");
+    startBtn.setAttribute("id", "startBtn")
     startBtn.textContent = "Start Game";
-    instructionsDiv.append(startBtn);
-    startBtn.addEventListener("click", gameInit);
-    gameNew.parentNode.appendChild(instructionsDiv);
     
+    startBtn.addEventListener("click", gameInit);
+    instructionsDiv.append(startBtn);
+    gameNew.parentNode.appendChild(instructionsDiv);
     
     //console.log(instructionsDiv)
 }
 
 function gameInit() {
-  gameOver = false; // to restrat if game is paused
+  
+  
+ 
     document.querySelector("#instructions").remove();
-    
+   
+   
+   startBtn.removeEventListener("click", gameInit)
+   
     gameLoop();
 }
 
 function restart() {
   if( gameOver) {
+    
     snake.x = 250;
     snake.y = 200;
-    food.x = 350;
-    food.y = 150;
+    newImage.x = 350;
+    newImage.y = 150;
     snakeArr = [snake];
-   gameOver = false;
-   movement.textContent = "Snake lives"
-   movement.style.color ="green";
+    gameOver = false;
+    movement.textContent = "Snake lives"
+    movement.style.color ="#C5C6C7";
+   
   }
   gameLoop()
 }
