@@ -60,8 +60,7 @@ class ImageClass {
 window.addEventListener("DOMContentLoaded", function() {
    
 snake = new Chracter(250,200,"black", 50, 50, 0, 0);
-snakeArr.push(snake)
-;
+snakeArr.push(snake);
 
 newImage = new ImageClass(350, 150, appleImage, 40, 40);
 playBtn.addEventListener("click", drawInstructions);
@@ -182,7 +181,7 @@ function findFood() {
      }
       growSnake()
        newImage.x = Math.floor(Math.random() * (gameNew.width - 70));
-       console.log(newImage.x)
+       
        newImage.y = Math.floor(Math.random() * (gameNew.height - 120));
  newImage.alive = true;
 
