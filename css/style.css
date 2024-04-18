@@ -15,7 +15,7 @@ html,body {
 
   h1, h2  {
     font-family: 'Nova Cut', cursive;
-  /* font-family: monospace; */
+ 
   color: rgb(212, 209, 36);
 }
 
@@ -62,11 +62,7 @@ canvas {
     position: relative;
    
 }
-/*
-#top-left {
-  grid-area: top-left;
-  border: 2px solid blue;
-}*/
+
 
   main {
     grid-area: game;
