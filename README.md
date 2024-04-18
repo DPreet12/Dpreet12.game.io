@@ -2,8 +2,7 @@
 
 **SEBPT220 Project 1: The Snake Game**
 
-To play the Snake Game, please visit: https://github.com/DPreet12/Dpreet12.game.io
-
+To play the Snake Game, please visit: https://dpreet12.github.io/Dpreet12.game.io/
 ## HOW TO PLAY
 
 Move the snake across the board to collect food and to increment your score. If possible, try to beat the previously achieved record score. Be careful from obestacles such as canvas walls and snake's body. Snake will grow every time after eating the food and every food bite from snake will adds 5 points to the score board.
