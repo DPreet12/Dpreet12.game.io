@@ -95,10 +95,7 @@ function gameLoop() {
     for( let i = (snakeArr.length - 1); i > 0; i--){ // backward loop for snake segments
         snakeArr[i].x = snakeArr[i -1].x;
         snakeArr[i].y = snakeArr[i - 1].y
-        //snakeArr[i].render()
-        //console.log(snakeArr[i])
-        //console.log(snakeArr[i].x)
-        //console.log(snakeArr[i].y)
+       
     }
       
     if (walls()) {
